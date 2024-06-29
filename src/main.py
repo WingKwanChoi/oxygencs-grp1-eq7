@@ -6,6 +6,7 @@ import time
 import os
 from dotenv import load_dotenv
 import psycopg2
+from datetime import datetime
 
 
 class App:
@@ -86,9 +87,12 @@ class App:
     def take_action(self, temperature):
         """Take action to HVAC depending on current temperature."""
         if float(temperature) >= float(self.T_MAX):
+            self.save_event_to_database(timestamp=datetime.now(), temperature=temperature, event_type="AC activated")
             self.send_action_to_hvac("TurnOnAc")
         elif float(temperature) <= float(self.T_MIN):
+            self.save_event_to_database(timestamp=datetime.now(), temperature=temperature, event_type="Heater activated")
             self.send_action_to_hvac("TurnOnHeater")
+
 
     def send_action_to_hvac(self, action):
         """Send action query to the HVAC service."""
@@ -96,14 +100,18 @@ class App:
         details = json.loads(r.text)
         print(details, flush=True)
 
-    def save_event_to_database(self, timestamp, temperature):
+    def save_event_to_database(self, timestamp, temperature, event_type=None):
         """Save sensor data into database."""
         try:
             if not self.conn or self.conn.closed:
                 self.connect_to_database()
+            
             cur = self.conn.cursor()
-            insert_query = """INSERT INTO sensor_data (timestamp, temperature) VALUES (%s, %s)"""
-            cur.execute(insert_query, (timestamp, temperature))
+            insert_query = """
+            INSERT INTO hvac_data (timestamp, temperature, event_type) 
+            VALUES (%s, %s, %s)
+            """
+            cur.execute(insert_query, (timestamp, temperature, event_type))
             self.conn.commit()
             cur.close()
         except Exception as e:

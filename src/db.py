@@ -10,10 +10,11 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 def create_table():
     """Create the sensor_data table in the database."""
     create_table_query = """
-    CREATE TABLE IF NOT EXISTS sensor_data (
+    CREATE TABLE IF NOT EXISTS hvac_data (
         id SERIAL PRIMARY KEY,
         timestamp TIMESTAMP NOT NULL,
-        temperature FLOAT NOT NULL
+        temperature FLOAT NOT NULL,
+        event_type VARCHAR(50)
     );
     """
     try:
@@ -23,9 +24,10 @@ def create_table():
         conn.commit()
         cur.close()
         conn.close()
-        print("Table sensor_data created successfully.")
+        print("Table hvac_data created successfully.")
     except Exception as e:
         print(f"Error creating table: {e}")
+
 
 if __name__ == "__main__":
     create_table()
