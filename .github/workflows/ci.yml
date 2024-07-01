@@ -31,9 +31,9 @@ jobs:
       run: docker build -t oxygencs-app .
 
     - name: Login to DockerHub
-      run: echo "${{ secrets.log680team7 }}" | docker login -u "${{ secrets.tktbruv }}" --password-stdin
+      run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
     - name: Push Docker image
       run: |
-        docker tag oxygencs-app ${{ secrets.tktbruv }}/oxygencs-app:latest
-        docker push ${{ secrets.tktbruv }}/oxygencs-app:latest
+        docker tag oxygencs-app ${{ secrets.DOCKER_HUB_USERNAME }}/oxygencs-app:latest
+        docker push ${{ secrets.DOCKER_HUB_USERNAME }}/oxygencs-app:latest
