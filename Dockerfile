@@ -1,35 +1,40 @@
-# Utiliser une image de base Python
+# Use an official Python runtime as a parent image
 FROM python:3.8-slim
 
-# Définir le répertoire de travail
+# Set the working directory in the container to /app
 WORKDIR /app
 
-# Empêche Python d'écrire des fichiers pyc
-ENV PYTHONDONTWRITEBYTECODE=1
-# Empêche Python de mettre en mémoire tampon stdout et stderr
-ENV PYTHONUNBUFFERED=1
+# Set environment variables
+ENV PIP_DEFAULT_TIMEOUT=100 \
+# Allow statements and log messages to immediately appear
+ PYTHONUNBUFFERED=1 \
+# disable a pip version check to reduce run-time & log-spam
+ PIP_DISABLE_PIP_VERSION_CHECK=1 \
+# cache is useless in docker image, so disable to reduce image size
+ PIP_NO_CACHE_DIR=1
 
-# Variables d'environnement spécifiques à l'application
-ENV HOST=http://159.203.50.162
-ENV TOKEN=999109532408abf795f3
-ENV T_MAX=25
-ENV T_MIN=18
-ENV PG_USER=user01eq7
-ENV PG_HOST=157.230.69.113
-ENV PG_DATABASE=db01eq7
-ENV PG_PASSWORD=nJCxUQQGEzAYKnWw
-ENV PG_PORT=5432
-#ENV DB_URL=...
 
-# Copier le fichier requirements.txt et installer les dépendances
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+ENV HOST=http://159.203.50.162 \ 
+ TOKEN=999109532408abf795f3 \
+ T_MAX=25 \
+ T_MIN=18 \
+ DATABASE_URL='postgresql://user01eq7:nJCxUQQGEzAYKnWw@157.230.69.113/db01eq7'
 
-# Copier le reste du code source
-COPY . .
+# Install system dependencies
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Exposer le port sur lequel l'application écoute
-EXPOSE 8001
+# Add Pipfiles
+COPY Pipfile Pipfile.lock /app/
 
-# Commande pour lancer l'application
-CMD ["python", "src/main.py"]
+# Install pipenv and install dependencies
+RUN pip install pipenv 
+RUN pipenv install --ignore-pipfile
+
+# Copy the rest of your app's source code from your host to your image filesystem.
+COPY . /app
+
+# Run the command to start your application
+CMD ["pipenv", "run", "start"]
