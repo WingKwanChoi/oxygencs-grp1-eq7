@@ -1,0 +1,17 @@
+[MASTER]
+disable=
+    C0103, # Variable name doesn't conform to snake_case
+    W0718, # Broad exception caught
+    W0613, # Unused argument
+    W0612, # Unused variable
+
+[TYPECHECK]
+ignored-modules=flask_sqlalchemy,sqlalchemy
+
+[FORMAT]
+# Accept both snake_case and UPPER_CASE for variables:
+variable-rgx=[a-z_][a-z0-9_]{0,30}$|[A-Z_][A-Z0-9_]{0,30}$
+
+[MESSAGES CONTROL]
+# Disable the warning about missing timeout:
+disable=missing-timeout
