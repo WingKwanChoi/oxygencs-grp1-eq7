@@ -1,43 +1,31 @@
-# Étape de construction
-FROM python:3.8-alpine as builder
-
-# Installer les dépendances nécessaires pour la compilation
-RUN apk add --no-cache gcc musl-dev libffi-dev
-
-# Installer pipenv
-RUN apk update \
-    && apk add libpq postgresql-dev \
-    && apk add build-base
-COPY ./requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir pipenv
-
-WORKDIR /app
-
-RUN pip install -r requirements.txt
-
-# Copier les fichiers Pipfile et Pipfile.lock pour installer les dépendances
-COPY Pipfile Pipfile.lock ./
-
-# Installer les dépendances avec pipenv
-RUN pipenv install --deploy --ignore-pipfile
-
-# Étape finale
 FROM python:3.8-alpine
 
-# Installer pipenv dans l'image finale
-RUN pip install --no-cache-dir pipenv
+# Prevents Python from writing pyc files.
+ENV PYTHONDONTWRITEBYTECODE=1
+# Keeps Python from buffering stdout and stderr to avoid situations where
+# the application crashes without emitting any logs due to buffering.
+ENV PYTHONUNBUFFERED=1
+
+# App specific environnement variables.
+ENV HOST=http://159.203.50.162
+ENV TOKEN=999109532408abf795f3
+ENV T_MAX=25
+ENV T_MIN=18
+ENV DATABASE_URL='postgresql://user01eq7:nJCxUQQGEzAYKnWw@157.230.69.113/db01eq7'
 
 WORKDIR /app
 
-# Copier les dépendances installées depuis l'étape de construction
-COPY --from=builder /root/.local /root/.local
-
-# Copier les fichiers de l'application depuis l'étape de construction
+# Copy the source code into the container.
 COPY . .
 
-# Ajouter le dossier des binaires locaux au PATH
-ENV PATH=/root/.local/bin:$PATH
+# Expose the port that the application listens on.
+EXPOSE 8000
 
-EXPOSE 80
+# Install the application's dependencies.
+# Install dependecies
+RUN pip install tomli --user
+RUN pip install pipenv --user
+RUN python -m pipenv install
 
-CMD ["pipenv", "run", "start"]
+# Run the application.
+CMD python -m pipenv run start

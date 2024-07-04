@@ -6,11 +6,10 @@ name = "pypi"
 [packages]
 requests = "*"
 signalrcore = "*"
-python-dotenv = "*"
-psycopg2 = "*"
-sqlalchemy = "*"
-python-dateutil = "*"
+pylint = "*"
+tomli = "*"
 psycopg2-binary = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
@@ -19,5 +18,5 @@ python_version = "3.8"
 
 [scripts]
 start = "python src/main.py"
-test = "python test/test.py"
-lint = "flake8 src"
+test = "pytest ./test/test.py"
+lint = "python -m pylint ./src"
