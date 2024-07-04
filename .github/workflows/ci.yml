@@ -58,6 +58,7 @@ jobs:
 
   build_and_deploy:
     name: Build and Deploy Docker Image
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: [test, lint_format]
     steps:
