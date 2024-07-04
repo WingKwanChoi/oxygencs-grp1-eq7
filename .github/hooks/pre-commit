@@ -1,0 +1,21 @@
+#!/bin/bash
+# Pre-commit hook to run pylint on staged Python files
+
+# Get a list of all staged Python files
+files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$')
+
+if [ -z "$files" ]; then
+    echo "No Python files to check."
+    exit 0
+fi
+
+# Run pylint on each staged file
+for file in $files; do
+    pylint "$file"
+    if [ $? -ne 0 ]; then
+        echo "Pylint check failed for $file. Please fix the issues before committing."
+        exit 1
+    fi
+done
+
+echo "Pylint check passed."

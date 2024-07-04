@@ -25,7 +25,10 @@ jobs:
         pipenv install --deploy --ignore-pipfile
 
     - name: Run tests
-      run: pipenv run pytest
+      run: |
+        pipenv run pytest
+        cd test
+        python test.py
 
     - name: Build Docker image
       run: docker build -t oxygencs-app .
