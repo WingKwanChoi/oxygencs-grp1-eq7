@@ -13,11 +13,9 @@ repos:
 
   - repo: local
     hooks:
-      - id: custom-python-test
-        name: Python Tests
-        entry: python test/test.py
+      - id: pytest
+        name: pytest
+        entry: pipenv run python -m pytest test/test.py
         language: system
-        pass_filenames: false
         types: [python]
-        files: ^test/test\.py$
-        verbose: true
+        pass_filenames: false
