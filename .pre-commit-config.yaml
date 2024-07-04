@@ -1,1 +1,14 @@
-## To implement
+#!/bin/bash
+
+PYTHON_FILES=$(find . -name "*.py")
+
+black ${PYTHON_FILES}
+
+git add ${PYTHON_FILES}
+
+pylint ${PYTHON_FILES}
+
+# Run unit tests
+python -m unittest discover
+# To change once we have unit tests
+echo "No unit tests to run"
