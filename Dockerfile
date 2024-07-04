@@ -1,40 +1,43 @@
-# Use an official Python runtime as a parent image
-FROM python:3.8-slim
+# Étape de construction
+FROM python:3.8-alpine as builder
 
-# Set the working directory in the container to /app
+# Installer les dépendances nécessaires pour la compilation
+RUN apk add --no-cache gcc musl-dev libffi-dev
+
+# Installer pipenv
+RUN apk update \
+    && apk add libpq postgresql-dev \
+    && apk add build-base
+COPY ./requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir pipenv
+
 WORKDIR /app
 
-# Set environment variables
-ENV PIP_DEFAULT_TIMEOUT=100 \
-# Allow statements and log messages to immediately appear
- PYTHONUNBUFFERED=1 \
-# disable a pip version check to reduce run-time & log-spam
- PIP_DISABLE_PIP_VERSION_CHECK=1 \
-# cache is useless in docker image, so disable to reduce image size
- PIP_NO_CACHE_DIR=1
+RUN pip install -r requirements.txt
 
+# Copier les fichiers Pipfile et Pipfile.lock pour installer les dépendances
+COPY Pipfile Pipfile.lock ./
 
-ENV HOST=http://159.203.50.162 \ 
- TOKEN=999109532408abf795f3 \
- T_MAX=25 \
- T_MIN=18 \
- DATABASE_URL='postgresql://user01eq7:nJCxUQQGEzAYKnWw@157.230.69.113/db01eq7'
+# Installer les dépendances avec pipenv
+RUN pipenv install --deploy --ignore-pipfile
 
-# Install system dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Étape finale
+FROM python:3.8-alpine
 
-# Add Pipfiles
-COPY Pipfile Pipfile.lock /app/
+# Installer pipenv dans l'image finale
+RUN pip install --no-cache-dir pipenv
 
-# Install pipenv and install dependencies
-RUN pip install pipenv 
-RUN pipenv install --ignore-pipfile
+WORKDIR /app
 
-# Copy the rest of your app's source code from your host to your image filesystem.
-COPY . /app
+# Copier les dépendances installées depuis l'étape de construction
+COPY --from=builder /root/.local /root/.local
 
-# Run the command to start your application
+# Copier les fichiers de l'application depuis l'étape de construction
+COPY . .
+
+# Ajouter le dossier des binaires locaux au PATH
+ENV PATH=/root/.local/bin:$PATH
+
+EXPOSE 80
+
 CMD ["pipenv", "run", "start"]

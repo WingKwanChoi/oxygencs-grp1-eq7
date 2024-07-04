@@ -8,6 +8,9 @@ requests = "*"
 signalrcore = "*"
 python-dotenv = "*"
 psycopg2 = "*"
+sqlalchemy = "*"
+python-dateutil = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
@@ -16,5 +19,5 @@ python_version = "3.8"
 
 [scripts]
 start = "python src/main.py"
-test = "# To implement"
-lint = "# To implement"
+test = "python test/test.py"
+lint = "flake8 src"
