@@ -1,34 +1,22 @@
-#!/bin/bash
+repos:
+  - repo: https://github.com/psf/black
+    rev: 23.3.0  
+    hooks:
+      - id: black
+        language_version: python3
 
-# Run Black for formatting
-echo "Running Black..."
-black .
-if [ $? -ne 0 ]; then
-    echo "Black formatting failed. Please fix the issues before committing."
-    exit 1
-fi
+  # - repo: https://github.com/pre-commit/mirrors-pylint
+  #   rev: v2.7.4  # Choose a tag in the repo
+  #   hooks:
+  #     - id: pylint
 
-# Run Pylint for linting
-echo "Running Pylint..."
-files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$')
-if [ -z "$files" ]; then
-    echo "No Python files to lint."
-else
-    for file in $files; do
-        pylint "$file"
-        if [ $? -ne 0 ]; then
-            echo "Pylint check failed for $file. Please fix the issues before committing."
-            exit 1
-        fi
-    done
-fi
-
-# Run unit tests
-echo "Running unit tests..."
-pytest
-if [ $? -ne 0 ]; then
-    echo "Unit tests failed. Please fix the issues before committing."
-    exit 1
-fi
-
-echo "All checks passed. Proceeding with commit."
+  - repo: local
+    hooks:
+      - id: custom-python-test
+        name: Python Tests
+        entry: python test/test.py
+        language: system
+        pass_filenames: false
+        types: [python]
+        files: ^test/test\.py$
+        verbose: true

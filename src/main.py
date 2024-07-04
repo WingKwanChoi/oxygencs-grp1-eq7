@@ -16,12 +16,12 @@ class App:
         self.TICKS = 10
 
         # Load environment variables
-        self.HOST = os.getenv('HOST')  # Setup your host here
-        self.TOKEN = os.getenv('TOKEN')  # Setup your token here
-        self.T_MAX = os.getenv('T_MAX')  # Setup your max temperature here
-        self.T_MIN = os.getenv('T_MIN')  # Setup your min temperature here
-        self.DATABASE_URL = os.getenv('DATABASE_URL')  # Setup your database here
-        
+        self.HOST = os.getenv("HOST")  # Setup your host here
+        self.TOKEN = os.getenv("TOKEN")  # Setup your token here
+        self.T_MAX = os.getenv("T_MAX")  # Setup your max temperature here
+        self.T_MIN = os.getenv("T_MIN")  # Setup your min temperature here
+        self.DATABASE_URL = os.getenv("DATABASE_URL")  # Setup your database here
+
         # Initialize database connection
         self.conn = None
         self.connect_to_database()
@@ -29,11 +29,11 @@ class App:
     def __del__(self):
         if self._hub_connection != None:
             self._hub_connection.stop()
-            
+
         # Cleanup database connection
         if self.conn:
             self.conn.close()
-            
+
     def connect_to_database(self):
         """Connect to the PostgreSQL database."""
         try:
@@ -87,12 +87,19 @@ class App:
     def take_action(self, temperature):
         """Take action to HVAC depending on current temperature."""
         if float(temperature) >= float(self.T_MAX):
-            self.save_event_to_database(timestamp=datetime.now(), temperature=temperature, event_type="AC activated")
+            self.save_event_to_database(
+                timestamp=datetime.now(),
+                temperature=temperature,
+                event_type="AC activated",
+            )
             self.send_action_to_hvac("TurnOnAc")
         elif float(temperature) <= float(self.T_MIN):
-            self.save_event_to_database(timestamp=datetime.now(), temperature=temperature, event_type="Heater activated")
+            self.save_event_to_database(
+                timestamp=datetime.now(),
+                temperature=temperature,
+                event_type="Heater activated",
+            )
             self.send_action_to_hvac("TurnOnHeater")
-
 
     def send_action_to_hvac(self, action):
         """Send action query to the HVAC service."""
@@ -105,10 +112,10 @@ class App:
         try:
             if not self.conn or self.conn.closed:
                 self.connect_to_database()
-            
+
             cur = self.conn.cursor()
             insert_query = """
-            INSERT INTO hvac_data (timestamp, temperature, event_type) 
+            INSERT INTO hvac_data (timestamp, temperature, event_type)
             VALUES (%s, %s, %s)
             """
             cur.execute(insert_query, (timestamp, temperature, event_type))
