@@ -4,7 +4,14 @@ FROM python:3.8-alpine
 ENV PYTHONDONTWRITEBYTECODE=1
 # Keeps Python from buffering stdout and stderr to avoid situations where
 # the application crashes without emitting any logs due to buffering.
-ENV PYTHONUNBUFFERED=1
+
+ENV PIP_DEFAULT_TIMEOUT=100 \
+# Allow statements and log messages to immediately appear
+ PYTHONUNBUFFERED=1 \
+# disable a pip version check to reduce run-time & log-spam
+ PIP_DISABLE_PIP_VERSION_CHECK=1 \
+# cache is useless in docker image, so disable to reduce image size
+ PIP_NO_CACHE_DIR=1
 
 # App specific environnement variables.
 ENV HOST=http://159.203.50.162
