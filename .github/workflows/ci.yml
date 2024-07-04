@@ -26,7 +26,7 @@ jobs:
       
       - name: Run Integration Tests
         run: |
-          python test/integration_tests.py
+          python test/test_integration.py
         continue-on-error: false  # Stop the build if tests fail
 
   lint_format:
