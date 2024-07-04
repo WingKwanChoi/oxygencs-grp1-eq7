@@ -4,7 +4,7 @@ import requests
 import json
 import time
 import os
-from dotenv import load_dotenv 
+from dotenv import load_dotenv
 import psycopg2
 from datetime import datetime
 
