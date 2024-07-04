@@ -1,35 +1,38 @@
-# Utiliser une image de base Python
-FROM python:3.8-slim
+FROM python:3.8-alpine
 
-# Définir le répertoire de travail
-WORKDIR /app
-
-# Empêche Python d'écrire des fichiers pyc
+# Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
-# Empêche Python de mettre en mémoire tampon stdout et stderr
-ENV PYTHONUNBUFFERED=1
+# Keeps Python from buffering stdout and stderr to avoid situations where
+# the application crashes without emitting any logs due to buffering.
 
-# Variables d'environnement spécifiques à l'application
+ENV PIP_DEFAULT_TIMEOUT=100 \
+# Allow statements and log messages to immediately appear
+ PYTHONUNBUFFERED=1 \
+# disable a pip version check to reduce run-time & log-spam
+ PIP_DISABLE_PIP_VERSION_CHECK=1 \
+# cache is useless in docker image, so disable to reduce image size
+ PIP_NO_CACHE_DIR=1
+
+# App specific environnement variables.
 ENV HOST=http://159.203.50.162
 ENV TOKEN=999109532408abf795f3
 ENV T_MAX=25
 ENV T_MIN=18
-ENV PG_USER=user01eq7
-ENV PG_HOST=157.230.69.113
-ENV PG_DATABASE=db01eq7
-ENV PG_PASSWORD=nJCxUQQGEzAYKnWw
-ENV PG_PORT=5432
-#ENV DB_URL=...
+ENV DATABASE_URL='postgresql://user01eq7:nJCxUQQGEzAYKnWw@157.230.69.113/db01eq7'
 
-# Copier le fichier requirements.txt et installer les dépendances
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+WORKDIR /app
 
-# Copier le reste du code source
+# Copy the source code into the container.
 COPY . .
 
-# Exposer le port sur lequel l'application écoute
-EXPOSE 8001
+# Expose the port that the application listens on.
+EXPOSE 8000
 
-# Commande pour lancer l'application
-CMD ["python", "src/main.py"]
+# Install the application's dependencies.
+# Install dependecies
+RUN pip install tomli --user
+RUN pip install pipenv --user
+RUN python -m pipenv install
+
+# Run the application.
+CMD python -m pipenv run start

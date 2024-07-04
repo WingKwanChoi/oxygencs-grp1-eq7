@@ -1,1 +1,23 @@
-## To implement
+repos:
+  - repo: https://github.com/psf/black
+    rev: 23.3.0  
+    hooks:
+      - id: black
+        language_version: python3
+
+  # - repo: https://github.com/pre-commit/mirrors-pylint
+  #   rev: v2.7.4  # Choose a tag in the repo
+  #   hooks:
+  #     - id: pylint
+  #        additional_dependencies: [tomli==1.2.2]
+
+  - repo: local
+    hooks:
+      - id: custom-python-test
+        name: Python Tests
+        entry: python test/test.py
+        language: system
+        pass_filenames: false
+        types: [python]
+        files: ^test/test\.py$
+        verbose: true
