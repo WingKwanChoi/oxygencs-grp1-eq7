@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: hvac-config
+  name: hvac-configmaps
 data:
   HOST: "http://159.203.50.162"
   T_MAX: "25"

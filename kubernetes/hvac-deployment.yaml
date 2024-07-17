@@ -1,7 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: oxygencs
+  name: oxygencs-deploy
+  namespace: grp01eq7-namespace
   labels:
     app: oxygencs
 spec:
@@ -23,10 +24,10 @@ spec:
         resources:
           requests:
             cpu: "100m"
-            memory: "100Mi"
+            memory: "200Mi"
           limits:
-            cpu: "250m"
-            memory: "250Mi"
+            cpu: "100m"
+            memory: "200Mi"
         envFrom:
         - configMapRef:
             name: hvac-configmaps
