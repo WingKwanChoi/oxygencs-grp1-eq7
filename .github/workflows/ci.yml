@@ -88,5 +88,5 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl set image deployment/oxygencs-deploy metrics=tktbruv/oxygencs:$(git rev-parse --short HEAD) -n grp01eq7-namespace
+          kubectl set image deployment/oxygencs oxygencs=tktbruv/oxygencs:$(git rev-parse --short HEAD) -n grp01eq7-namespace
           kubectl rollout status deployment/oxygencs-deploy -n grp01eq7-namespace
