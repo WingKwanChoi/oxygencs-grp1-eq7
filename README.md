@@ -37,6 +37,21 @@ After setup, you can start the program with the following command:
 pipenv run start
 ```
 
+## Pre-commit Hooks
+This project uses pre-commit hooks to maintain code quality. The pre-commit configuration includes:
+
+- Black: A Python code formatter. It formats your code to ensure consistency and adherence to style guidelines.
+- Pytest: A testing framework to ensure your code functions as expected. The configuration runs tests from `test/test.py`.
+
+To install the pre-commit hooks, run:
+```bash
+pipenv run pre-commit install
+```
+Ensure your code passes the checks before committing:
+```bash
+pipenv run pre-commit run --all-files
+```
+
 ## Logging
 
 The application logs important events such as connection open/close and error events to help in troubleshooting.
