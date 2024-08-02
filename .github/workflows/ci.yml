@@ -86,7 +86,7 @@ jobs:
           mkdir -p ~/.kube
           echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
 
-      - name: Deploy to Kubernetes
+      - name: Deploy to Kubernetes 
         run: |
           kubectl set image deployment/oxygencs-deploy oxygencs=tktbruv/oxygencs:$(git rev-parse --short HEAD) -n grp01eq7-namespace
           kubectl rollout status deployment/oxygencs-deploy -n grp01eq7-namespace
