@@ -4,5 +4,5 @@ metadata:
   name: hvac-configmaps
 data:
   HOST: "http://159.203.50.162"
-  T_MAX: "28"
-  T_MIN: "14"
+  T_MAX: "38"
+  T_MIN: "10"
