@@ -90,3 +90,4 @@ jobs:
         run: |
           kubectl set image deployment/oxygencs-deploy oxygencs=tktbruv/oxygencs:$(git rev-parse --short HEAD) -n grp01eq7-namespace
           kubectl rollout status deployment/oxygencs-deploy -n grp01eq7-namespace
+          kubectl apply -f hvac-configmaps.yaml
