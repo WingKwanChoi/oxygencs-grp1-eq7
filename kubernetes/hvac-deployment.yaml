@@ -23,11 +23,11 @@ spec:
         - containerPort: 8080
         resources:
           requests:
-            cpu: "100m"
-            memory: "200Mi"
+            cpu: "50m"
+            memory: "100Mi"
           limits:
-            cpu: "100m"
-            memory: "200Mi"
+            cpu: "50m"
+            memory: "100Mi"
         envFrom:
         - configMapRef:
             name: hvac-configmaps
